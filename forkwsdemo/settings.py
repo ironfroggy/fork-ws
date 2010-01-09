@@ -77,4 +77,4 @@ INSTALLED_APPS = (
 
 # App settings
 
-GIT_ROOT_PATH = "/tmp/forkws-demo-git-repos"
+GIT_ROOT_PATH = "/tmp/forkws-demo-git-repos/"
