@@ -1,0 +1,5 @@
+extensionhub/settings.py
+extensionhub/manager.py
+project_version.yaml
+*.py[co]
+*.swp
