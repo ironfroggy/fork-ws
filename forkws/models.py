@@ -5,6 +5,10 @@ from django.db import models
 from django.conf import settings
 
 from git.cmd import Git
+from git.repo import Repo
+
+if not os.path.exists(settings.GIT_ROOT_PATH):
+    os.mkdir(settings.GIT_ROOT_PATH)
 
 class Fork(models.Model):
     """Represents one body of text that is and can be forked."""
@@ -16,8 +20,6 @@ class Fork(models.Model):
     def __init__(self, **kwargs):
         if not kwargs.get('parent', None):
             # Initialize a new repo
-            if not os.path.exists(settings.GIT_ROOT_PATH):
-                os.mkdir(settings.GIT_ROOT_PATH)
             git_path = mkdtemp(prefix=settings.GIT_ROOT_PATH)
             git = Git(git_path)
             git.init()
@@ -31,4 +33,8 @@ class Fork(models.Model):
         super(Fork, self).__init__(**kwargs)
 
     def fork(self, new_body):
-        pass 
+        git_path = mkdtemp(prefix=settings.GIT_ROOT_PATH)
+        git = Git(git_path)
+        git.clone(os.path.abspath(self.git_path), git_path)
+
+        return Fork.objects.create(body=new_body, parent=self, git_path=git_path)
