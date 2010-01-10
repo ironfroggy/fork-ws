@@ -74,3 +74,8 @@ class Fork(models.Model):
                 self.save()
             else:
                 raise
+
+    def resolve(self, resolution):
+        self.body = resolution
+        self.dirty = False
+        self.save()

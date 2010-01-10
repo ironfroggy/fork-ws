@@ -45,3 +45,15 @@ class ForkingTest(TestCase):
 
         self.failIfEqual(f2.body, "0123456789\nabcdefghij")
         assert f2.dirty
+
+    def test_resolve(self):
+        f1 = Fork.objects.create(body="0123456789")
+        f2 = f1.fork("0123456789\nabcdefghij")
+        f3 = f1.fork("0123456789\nklmnopqrst")
+
+        f2.merge(f3)
+
+        f2.resolve("0123456789\nklmnopqrst")
+        resolved_body = open(os.path.join(f2.git_path, 'BODY')).read()
+        assert resolved_body == "0123456789\nklmnopqrst"
+
