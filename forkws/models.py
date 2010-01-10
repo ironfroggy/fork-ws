@@ -16,6 +16,7 @@ class Fork(models.Model):
     git_path = models.FilePathField(settings.GIT_ROOT_PATH)
     parent = models.ForeignKey('self', blank=True, null=True)
     body = models.TextField(null=False, blank=False)
+    dirty = models.BooleanField(default=False)
 
     def __init__(self, **kwargs):
         if not kwargs.get('parent', None):
@@ -60,6 +61,16 @@ class Fork(models.Model):
 
     def _forward(self, forward_fork):
         git = Git(self.git_path)
-        git.pull(forward_fork.git_path)
+        git.pull(forward_fork.git_path, 'master')
         self._reload_body()
 
+    def merge(self, child_fork):
+        try:
+            self._forward(child_fork)
+        except GitCommandError, e:
+            if e.status == 1:
+                self._reload_body()
+                self.dirty = True
+                self.save()
+            else:
+                raise

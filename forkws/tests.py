@@ -32,7 +32,15 @@ class ForkingTest(TestCase):
         f1 = Fork.objects.create(body="0123456789")
         f2 = f1.fork("0123456789\nabcdefghij")
 
-        print f1.git_path
         f1._forward(f2)
 
         self.failUnlessEqual(f1.body, "0123456789\nabcdefghij") 
+
+    def test_merge_conflict(self):
+        f1 = Fork.objects.create(body="0123456789")
+        f2 = f1.fork("0123456789\nabcdefghij")
+        f3 = f1.fork("0123456789\nklmnopqrst")
+
+        f2.merge(f3)
+
+        self.failIfEqual(f2.body, "0123456789\nabcdefghij")
