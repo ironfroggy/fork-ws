@@ -44,3 +44,4 @@ class ForkingTest(TestCase):
         f2.merge(f3)
 
         self.failIfEqual(f2.body, "0123456789\nabcdefghij")
+        assert f2.dirty
