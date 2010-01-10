@@ -22,9 +22,17 @@ class ForkingTest(TestCase):
         f.git_path
 
     def test_fork(self):
-        """I'm not sure how to write good tests for this."""
-
         f1 = Fork.objects.create(body="0123456789")
         f2 = f1.fork("0123456789\nabcdefghij")
         self.failUnlessEqual(f1, f2.parent)
+
         self.failUnlessEqual(f2.body, "0123456789\nabcdefghij") 
+
+    def test_forward(self):
+        f1 = Fork.objects.create(body="0123456789")
+        f2 = f1.fork("0123456789\nabcdefghij")
+
+        print f1.git_path
+        f1._forward(f2)
+
+        self.failUnlessEqual(f1.body, "0123456789\nabcdefghij") 
