@@ -6,6 +6,8 @@ from django.http import HttpResponse
 
 from forkws.models import Fork
 
+# API
+
 def json_view(f):
     return lambda *a, **k: return dumps(f(*a, **k))
 
@@ -28,4 +30,8 @@ def merge(request, to_id, from_id):
     to_fork.merge(from_fork)
 
     return {'dirty': to_fork.dirty}
+
+
+# CRUD
+
 
