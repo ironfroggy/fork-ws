@@ -85,3 +85,7 @@ class Fork(models.Model):
         self.body = resolution
         self.dirty = False
         self.save()
+
+    def children(self):
+        return Fork.objects.filter(parent=self)
+

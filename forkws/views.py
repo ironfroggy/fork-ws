@@ -49,5 +49,11 @@ def new_page(request):
 
 def view_fork(request, id):
     fork = Fork.objects.get(id=id)
-    form = ForkForm(instance=fork)
+    if request.POST:
+        form = ForkForm(request.POST, parent=fork)
+        if form.is_valid():
+            new_fork = form.save()
+            return HttpResponseRedirect(reverse('view_fork', kwargs={'id': new_fork.id}))
+    else:
+        form = ForkForm(instance=fork)
     return render_to_response("forkws/new.html", locals())

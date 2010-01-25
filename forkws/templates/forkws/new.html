@@ -2,11 +2,25 @@
 
 {% block content %}
 
-    <h3>new</h3>
+    {% if fork %}
+        {% if fork.parent %}
+            <a href="{% url view_fork id=fork.parent.id %}">parent</a>
+        {% endif %}
+    {% else %}
+        <h3>new</h3>
+    {% endif %}
 
     <form method="POST">
-        {{ form }}
+        <textarea name="body">{{ fork.body|escape }}</textarea>
         <input type="submit" value="create" />
     </form>
+
+    {% if fork %}
+        <ul>
+            {% for child in fork.children %}
+                <li><a href="{% url view_fork id=child.id %}">{{ child }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
 {% endblock %}
