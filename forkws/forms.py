@@ -3,4 +3,6 @@ from django.forms import ModelForm
 from forkws.models import Fork
 
 class ForkForm(ModelForm):
-    model = Fork
+    class Meta:
+        model = Fork
+        exclude = ('git_path', 'dirty', 'parent')

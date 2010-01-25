@@ -18,7 +18,7 @@ class Fork(models.Model):
     body = models.TextField(null=False, blank=False)
     dirty = models.BooleanField(default=False)
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         if not kwargs.get('parent', None):
             # Initialize a new repo
             git_path = mkdtemp(prefix=settings.GIT_ROOT_PATH)
@@ -26,23 +26,29 @@ class Fork(models.Model):
             git.init()
 
             body_path = os.path.join(git_path, 'BODY')
-            print >>open(body_path, 'w'), kwargs['body']
 
-            git.add(body_path)
-            git.commit(message="created new")
+            self.message = "created new"
 
             kwargs['git_path'] = git_path
 
-        super(Fork, self).__init__(**kwargs)
+        super(Fork, self).__init__(*args, **kwargs)
+
+    def _next_message(self):
+        message = self.message
+        self.message = None
+        return message
 
     def save(self, *args, **kwargs):
+        message = kwargs.pop('message', self._next_message() or 'update')
+
         super(Fork, self).save(*args, **kwargs)
-        open(os.path.join(self.git_path, "BODY"), 'w').write(self.body)
+        with open(os.path.join(self.git_path, "BODY"), 'w') as f:
+            f.write(self.body)
         git = Git(self.git_path)
         git.add('BODY')
 
         try:
-            git.commit(message="update")
+            git.commit(message=message)
         except GitCommandError, e:
             if e.status != 1:
                 raise

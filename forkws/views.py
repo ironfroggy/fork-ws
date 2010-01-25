@@ -2,14 +2,17 @@
 
 from json import dumps
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.shortcuts import render_to_response
 
 from forkws.models import Fork
+from forkws.forms import ForkForm
 
 # API
 
 def json_view(f):
-    return lambda *a, **k: return dumps(f(*a, **k))
+    return lambda *a, **k: dumps(f(*a, **k))
 
 @json_view
 def new(request):
@@ -34,4 +37,17 @@ def merge(request, to_id, from_id):
 
 # CRUD
 
+def new_page(request):
+    if request.POST:
+        form = ForkForm(request.POST)
+        if form.is_valid():
+            fork = form.save()
+            return HttpResponseRedirect(reverse('view_fork', kwargs={'id': fork.id}))
+    else:
+        form = ForkForm()
+    return render_to_response("forkws/new.html", locals())
 
+def view_fork(request, id):
+    fork = Fork.objects.get(id=id)
+    form = ForkForm(instance=fork)
+    return render_to_response("forkws/new.html", locals())
