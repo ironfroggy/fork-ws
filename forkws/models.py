@@ -13,10 +13,15 @@ if not os.path.exists(settings.GIT_ROOT_PATH):
 class Fork(models.Model):
     """Represents one body of text that is and can be forked."""
 
+    title = models.CharField(max_length=100)
+
     git_path = models.FilePathField(settings.GIT_ROOT_PATH)
     parent = models.ForeignKey('self', blank=True, null=True)
     body = models.TextField(null=False, blank=False)
     dirty = models.BooleanField(default=False)
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     def __init__(self, *args, **kwargs):
         if not kwargs.get('parent', None):

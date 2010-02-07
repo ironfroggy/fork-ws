@@ -16,4 +16,4 @@ class ForkForm(ModelForm):
 
     class Meta:
         model = Fork
-        exclude = ('git_path', 'dirty', 'parent')
+        exclude = ('git_path', 'dirty', 'parent', 'created', 'updated')

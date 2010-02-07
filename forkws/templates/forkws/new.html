@@ -11,14 +11,18 @@
     {% endif %}
 
     <form method="POST">
-        <textarea name="body">{{ fork.body|escape }}</textarea>
-        <input type="submit" value="create" />
+        <ul>
+            <li><input type="text" name="title" value="{{ fork.title}}" /></li>
+            <li><textarea name="body">{{ fork.body|escape }}</textarea></li>
+            <li><input type="submit" value="create" /></li>
+        </ul>
     </form>
 
     {% if fork %}
+        <h3>Forks</h3>
         <ul>
             {% for child in fork.children %}
-                <li><a href="{% url view_fork id=child.id %}">{{ child }}</li>
+                <li><a href="{% url view_fork id=child.id %}">{{ child.title }}</a></li>
             {% endfor %}
         </ul>
     {% endif %}

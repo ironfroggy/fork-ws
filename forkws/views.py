@@ -45,6 +45,7 @@ def new_page(request):
             return HttpResponseRedirect(reverse('view_fork', kwargs={'id': fork.id}))
     else:
         form = ForkForm()
+    recent = Fork.objects.all().order_by('-created')
     return render_to_response("forkws/new.html", locals())
 
 def view_fork(request, id):
@@ -56,4 +57,5 @@ def view_fork(request, id):
             return HttpResponseRedirect(reverse('view_fork', kwargs={'id': new_fork.id}))
     else:
         form = ForkForm(instance=fork)
+    recent = Fork.objects.all().order_by('-created')
     return render_to_response("forkws/new.html", locals())
